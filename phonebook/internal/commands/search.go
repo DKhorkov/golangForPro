@@ -7,7 +7,7 @@ import (
 
 func Search(key string) *models.Entry {
 	for i, entry := range data.Entries {
-		if entry.Surname == key {
+		if entry.Tel == key {
 			return &data.Entries[i]
 		}
 	}
