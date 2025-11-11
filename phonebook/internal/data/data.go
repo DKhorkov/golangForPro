@@ -1,8 +1,8 @@
-package commands
+package data
 
 import "github.com/DKhorkov/golangForPro/phonebook/internal/models"
 
-var entries = []models.Entry{
+var Entries = []models.Entry{
 	{
 		Name:    "Иван",
 		Surname: "Иванов",

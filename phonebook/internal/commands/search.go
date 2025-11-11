@@ -1,13 +1,14 @@
 package commands
 
 import (
+	"github.com/DKhorkov/golangForPro/phonebook/internal/data"
 	"github.com/DKhorkov/golangForPro/phonebook/internal/models"
 )
 
 func Search(key string) *models.Entry {
-	for i, entry := range entries {
+	for i, entry := range data.Entries {
 		if entry.Surname == key {
-			return &entries[i]
+			return &data.Entries[i]
 		}
 	}
 
