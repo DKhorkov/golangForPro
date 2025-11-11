@@ -10,7 +10,7 @@ type Entry struct {
 
 func (e *Entry) View() string {
 	return fmt.Sprintf(
-		"Name: %s\nSurname: %s\nPhone:%s\n",
+		"Name: %s\nSurname: %s\nPhone: %s\n",
 		e.Name,
 		e.Surname,
 		e.Tel,
