@@ -21,19 +21,9 @@ func (rw *CSVReadWriter) Read() ([]models.Entry, error) {
 	_, err := os.Stat(rw.filepath)
 	switch {
 	case errors.Is(err, os.ErrNotExist):
-		//f, err = os.Create(rw.filepath)
-		//if err != nil {
-		//	return nil, err
-		//}
-		//
-		//if err = f.Close(); err != nil {
-		//	return nil, err
-		//}
-
-		// наполняем книгу дефолтными записями:
 		if err = rw.Write(defaultEntries); err != nil {
 			return nil, err
-		}
+		} // наполняем книгу дефолтными записями:
 	case err != nil:
 		return nil, err
 	}
