@@ -2,6 +2,8 @@ package args
 
 import "errors"
 
-var ErrInvalidArguments = errors.New("invalid arguments")
-
-var ErrInvalidCommand = errors.New("invalid command")
+var (
+	ErrInvalidUsage     = errors.New("invalid usage")
+	ErrInvalidArguments = errors.New("invalid arguments")
+	ErrInvalidCommand   = errors.New("invalid command")
+)

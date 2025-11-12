@@ -15,6 +15,7 @@
 *.out
 coverage
 phonebook_cli
+phonebook.csv
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

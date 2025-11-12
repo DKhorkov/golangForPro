@@ -3,31 +3,31 @@ package main
 import (
 	"fmt"
 	"github.com/DKhorkov/golangForPro/phonebook/internal/args"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/commands"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/models"
+	"github.com/DKhorkov/golangForPro/phonebook/internal/phonebook"
+	"github.com/DKhorkov/golangForPro/phonebook/internal/readwriters"
+)
+
+const (
+	csvFilepath = "phonebook.csv"
 )
 
 func main() {
-	command, err := args.GetCommand()
+	command, err := args.ReadCommand()
 	if err != nil {
+		fmt.Println(err)
+
 		return
 	}
 
-	switch command.Name {
-	case models.CommandSearch:
-		key := command.Params[0]
-		entry := commands.Search(key)
-		if entry == nil {
-			fmt.Println("No entry found: ", key)
+	rw := readwriters.NewCSVReadWriter(csvFilepath)
+	pb, err := phonebook.New(rw)
+	if err != nil {
+		fmt.Println(err)
 
-			return
-		}
+		return
+	}
 
-		fmt.Println(entry.View())
-	case models.CommandList:
-		entries := commands.List()
-		for _, entry := range entries {
-			fmt.Println(entry.View())
-		}
+	if err = pb.Execute(*command); err != nil {
+		fmt.Println(err)
 	}
 }

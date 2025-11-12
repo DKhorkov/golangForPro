@@ -1,13 +1,8 @@
 package models
 
-type CommandName string
-
-const (
-	CommandSearch CommandName = "search"
-	CommandList   CommandName = "list"
-)
+import "github.com/DKhorkov/golangForPro/phonebook/internal/commands"
 
 type Command struct {
-	Name   CommandName `json:"name"`
-	Params []string    `json:"params"`
+	Name   commands.CommandName `json:"name"`
+	Params []string             `json:"params"`
 }
