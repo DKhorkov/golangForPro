@@ -54,11 +54,6 @@ func (pb *PhoneBook) list() error {
 }
 
 func (pb *PhoneBook) search(phone string) error {
-	for _, entry := range pb.storage {
-		if entry.Phone == phone {
-		}
-	}
-
 	if entry, ok := pb.storage[phone]; ok {
 		fmt.Println(entry.View())
 
