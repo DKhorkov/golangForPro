@@ -2,15 +2,19 @@ package phonebook
 
 import (
 	"fmt"
+	"sort"
+	"strconv"
+	"time"
+
 	"github.com/DKhorkov/golangForPro/phonebook/internal/commands"
 	"github.com/DKhorkov/golangForPro/phonebook/internal/interfaces"
 	"github.com/DKhorkov/golangForPro/phonebook/internal/models"
-	"time"
 )
 
 type PhoneBook struct {
 	rw      interfaces.ReadWriter
-	storage map[string]models.Entry
+	record  models.PhoneBook
+	indexes map[string]int
 }
 
 func New(rw interfaces.ReadWriter) (*PhoneBook, error) {
@@ -22,18 +26,31 @@ func New(rw interfaces.ReadWriter) (*PhoneBook, error) {
 		return nil, err
 	}
 
-	pb.storage = make(map[string]models.Entry, len(entries))
-	for _, entry := range entries {
-		pb.storage[entry.Phone] = entry
-	}
+	pb.record = entries
+
+	pb.createIndex()
 
 	return pb, nil
+}
+
+func (pb *PhoneBook) createIndex() {
+	sort.Sort(pb.record)
+
+	pb.indexes = make(map[string]int)
+	for i, entry := range pb.record {
+		pb.indexes[entry.Phone] = i
+	}
 }
 
 func (pb *PhoneBook) Execute(command models.Command) error {
 	switch command.Name {
 	case commands.CommandList:
-		return pb.list()
+		reverse, err := strconv.ParseBool(command.Params[0])
+		if err != nil {
+			return err
+		}
+
+		return pb.list(reverse)
 	case commands.CommandSearch:
 		return pb.search(command.Params[0])
 	case commands.CommandInsert:
@@ -45,43 +62,47 @@ func (pb *PhoneBook) Execute(command models.Command) error {
 	return nil
 }
 
-func (pb *PhoneBook) list() error {
-	for _, entry := range pb.storage {
+func (pb *PhoneBook) list(reverse bool) error {
+	if reverse {
+		sort.Sort(sort.Reverse(pb.record))
+	}
+
+	for _, entry := range pb.record {
 		fmt.Println(entry.View())
 	}
 
 	return nil
 }
 
-func (pb *PhoneBook) search(phone string) error {
-	for _, entry := range pb.storage {
-		if entry.Phone == phone {
-		}
+func (pb *PhoneBook) search(key string) error {
+	index, ok := pb.indexes[key]
+	if !ok {
+		return fmt.Errorf("no entry found: %s", key)
 	}
 
-	if entry, ok := pb.storage[phone]; ok {
-		fmt.Println(entry.View())
+	fmt.Println(pb.record[index].View())
 
-		return nil
-	}
-
-	return fmt.Errorf("no entry found: %s", phone)
+	return nil
 }
 
 func (pb *PhoneBook) insert(name, surname, phone string) error {
-	if _, ok := pb.storage[phone]; ok {
+	if _, ok := pb.indexes[phone]; ok {
 		return fmt.Errorf("entry already exists: %s", phone)
 	}
 
-	pb.storage[phone] = models.Entry{
+	entry := models.Entry{
 		Name:       name,
 		Surname:    surname,
 		Phone:      phone,
 		LastAccess: time.Now(),
 	}
 
-	entries := make([]models.Entry, 0, len(pb.storage))
-	for _, entry := range pb.storage {
+	pb.record = append(pb.record, entry)
+
+	pb.createIndex()
+
+	entries := make([]models.Entry, 0, len(pb.record))
+	for _, entry = range pb.record {
 		entries = append(entries, entry)
 	}
 
@@ -89,14 +110,17 @@ func (pb *PhoneBook) insert(name, surname, phone string) error {
 }
 
 func (pb *PhoneBook) delete(key string) error {
-	if _, ok := pb.storage[key]; !ok {
+	index, ok := pb.indexes[key]
+	if !ok {
 		return fmt.Errorf("no entry found: %s", key)
 	}
 
-	delete(pb.storage, key)
+	pb.record = append(pb.record[:index], pb.record[index+1:]...)
 
-	entries := make([]models.Entry, 0, len(pb.storage))
-	for _, entry := range pb.storage {
+	delete(pb.indexes, key)
+
+	entries := make([]models.Entry, 0, len(pb.record))
+	for _, entry := range pb.record {
 		entries = append(entries, entry)
 	}
 

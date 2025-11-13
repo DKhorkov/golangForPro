@@ -3,6 +3,7 @@ package readwriters
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"os"
 	"time"
 
@@ -18,7 +19,7 @@ func NewCSVReadWriter(filepath string) *CSVReadWriter {
 }
 
 func (rw *CSVReadWriter) Read() ([]models.Entry, error) {
-	_, err := os.Stat(rw.filepath)
+	fileInfo, err := os.Stat(rw.filepath)
 	switch {
 	case errors.Is(err, os.ErrNotExist):
 		if err = rw.Write(defaultEntries); err != nil {
@@ -26,6 +27,11 @@ func (rw *CSVReadWriter) Read() ([]models.Entry, error) {
 		} // наполняем книгу дефолтными записями:
 	case err != nil:
 		return nil, err
+	default:
+		mode := fileInfo.Mode()
+		if !mode.IsRegular() {
+			return nil, fmt.Errorf("%s not a regular file", rw.filepath)
+		}
 	}
 
 	f, err := os.Open(rw.filepath)

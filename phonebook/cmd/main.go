@@ -5,13 +5,20 @@ import (
 	"github.com/DKhorkov/golangForPro/phonebook/internal/args"
 	"github.com/DKhorkov/golangForPro/phonebook/internal/phonebook"
 	"github.com/DKhorkov/golangForPro/phonebook/internal/readwriters"
+	"os"
 )
 
 const (
-	csvFilepath = "phonebook.csv"
+	csvEnv             = "PHONEBOOK_CSV"
+	csvDefaultFilepath = "phonebook.csv"
 )
 
 func main() {
+	filepath := os.Getenv(csvEnv)
+	if filepath == "" {
+		filepath = csvDefaultFilepath
+	}
+
 	command, err := args.ReadCommand()
 	if err != nil {
 		fmt.Println(err)
@@ -19,7 +26,7 @@ func main() {
 		return
 	}
 
-	rw := readwriters.NewCSVReadWriter(csvFilepath)
+	rw := readwriters.NewCSVReadWriter(filepath)
 	pb, err := phonebook.New(rw)
 	if err != nil {
 		fmt.Println(err)

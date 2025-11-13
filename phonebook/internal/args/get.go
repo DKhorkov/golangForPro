@@ -7,6 +7,7 @@ import (
 	"github.com/DKhorkov/golangForPro/phonebook/internal/validation"
 	"os"
 	"path"
+	"strconv"
 )
 
 func ReadCommand() (*models.Command, error) {
@@ -18,8 +19,18 @@ func ReadCommand() (*models.Command, error) {
 
 	switch commands.CommandName(os.Args[1]) {
 	case commands.CommandList:
+		reverse := false
+		if len(os.Args) > 2 {
+			if os.Args[2] != "reverse" {
+				return nil, fmt.Errorf("%w. Usage: %s list <reverse>", ErrInvalidUsage, exe)
+			}
+
+			reverse = true
+		}
+
 		return &models.Command{
-			Name: commands.CommandList,
+			Name:   commands.CommandList,
+			Params: []string{strconv.FormatBool(reverse)},
 		}, nil
 	case commands.CommandSearch:
 		if len(os.Args) < 3 {
