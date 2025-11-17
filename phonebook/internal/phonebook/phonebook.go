@@ -2,13 +2,9 @@ package phonebook
 
 import (
 	"fmt"
-	"sort"
-	"strconv"
-	"time"
-
-	"github.com/DKhorkov/golangForPro/phonebook/internal/commands"
 	"github.com/DKhorkov/golangForPro/phonebook/internal/interfaces"
 	"github.com/DKhorkov/golangForPro/phonebook/internal/models"
+	"sort"
 )
 
 type PhoneBook struct {
@@ -42,59 +38,26 @@ func (pb *PhoneBook) createIndex() {
 	}
 }
 
-func (pb *PhoneBook) Execute(command models.Command) error {
-	switch command.Name {
-	case commands.CommandList:
-		reverse, err := strconv.ParseBool(command.Params[0])
-		if err != nil {
-			return err
-		}
-
-		return pb.list(reverse)
-	case commands.CommandSearch:
-		return pb.search(command.Params[0])
-	case commands.CommandInsert:
-		return pb.insert(command.Params[0], command.Params[1], command.Params[2])
-	case commands.CommandDelete:
-		return pb.delete(command.Params[0])
-	}
-
-	return nil
-}
-
-func (pb *PhoneBook) list(reverse bool) error {
+func (pb *PhoneBook) List(reverse bool) ([]models.Entry, error) {
 	if reverse {
 		sort.Sort(sort.Reverse(pb.record))
 	}
 
-	for _, entry := range pb.record {
-		fmt.Println(entry.View())
-	}
-
-	return nil
+	return pb.record, nil
 }
 
-func (pb *PhoneBook) search(key string) error {
+func (pb *PhoneBook) Search(key string) (*models.Entry, error) {
 	index, ok := pb.indexes[key]
 	if !ok {
-		return fmt.Errorf("no entry found: %s", key)
+		return nil, fmt.Errorf("no entry found: %s", key)
 	}
 
-	fmt.Println(pb.record[index].View())
-
-	return nil
+	return &pb.record[index], nil
 }
 
-func (pb *PhoneBook) insert(name, surname, phone string) error {
-	if _, ok := pb.indexes[phone]; ok {
-		return fmt.Errorf("entry already exists: %s", phone)
-	}
-
-	entry := models.Entry{
-		Name:       name,
-		Surname:    surname,
-		Phone:      phone,
-		LastAccess: time.Now(),
+func (pb *PhoneBook) Insert(entry models.Entry) error {
+	if _, ok := pb.indexes[entry.Phone]; ok {
+		return fmt.Errorf("entry already exists: %s", entry.Phone)
 	}
 
 	pb.record = append(pb.record, entry)
@@ -109,7 +72,7 @@ func (pb *PhoneBook) insert(name, surname, phone string) error {
 	return pb.rw.Write(entries)
 }
 
-func (pb *PhoneBook) delete(key string) error {
+func (pb *PhoneBook) Delete(key string) error {
 	index, ok := pb.indexes[key]
 	if !ok {
 		return fmt.Errorf("no entry found: %s", key)
