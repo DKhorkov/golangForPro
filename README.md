@@ -1,51 +1,41 @@
-## Phonebook
+# Phonebook
 
-Build:
+## Server 
 
-```shell
-go build -o phonebook_cli phonebook/cmd/main.go
-```
-
-Provide phonebook source:
+Run:
 
 ```shell
-export PHONEBOOK_SOURCE=<value>
+go run phonebook/server/cmd/main.go
 ```
 
-Available source values: <b>csv</b>, <b>json</b>.
-
-Provide path to phonebook:
-
-```shell
-export PHONEBOOK_PATH=<path_to_phonebook>
-```
+## Client
 
 List:
 
 ```shell
-./phonebook_cli list
+go run phonebook/client/cmd/main.go list
 ```
 
 List in reversed order:
 
 ```shell
-./phonebook_cli list -r
+go run phonebook/client/cmd/main.go list -r
 ```
 
 Search:
 
 ```shell
-./phonebook_cli search -k "+7 (021) 703-77-56"
+go run phonebook/client/cmd/main.go search -k "+7 (021) 703-77-56"
 ```
 
 Insert:
 
 ```shell
-./phonebook_cli insert -n Иван -s Романов -p "+7 (021) 703-77-56"
+go run phonebook/client/cmd/main.go insert -n Иван -s Романов -p "+7 (021) 703-77-56"
 ```
 
 Delete:
 
 ```shell
-./phonebook_cli delete -k "+7 (021) 703-77-56"
+go run phonebook/client/cmd/main.go delete -k "+7 (021) 703-77-56"
 ```

@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/DKhorkov/golangForPro/phonebook/internal/models"
+	"github.com/DKhorkov/golangForPro/phonebook/server/internal/models"
 )
 
 type CSVReadWriter struct {

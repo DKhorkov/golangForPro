@@ -2,14 +2,10 @@ package filepath
 
 import (
 	"fmt"
-	"os"
 	"strings"
 )
 
 const (
-	sourceEnv = "PHONEBOOK_SOURCE"
-	pathEnv   = "PHONEBOOK_PATH"
-
 	csvSource  = "csv"
 	jsonSource = "json"
 
@@ -25,10 +21,7 @@ var (
 	validSources    = []string{csvSource, jsonSource}
 )
 
-func Get() (string, error) {
-	filepath := os.Getenv(pathEnv)
-	source := os.Getenv(sourceEnv)
-
+func Get(filepath, source string) (string, error) {
 	switch {
 	case strings.HasSuffix(filepath, CSVExtension), strings.HasSuffix(filepath, JSONExtension):
 		return filepath, nil

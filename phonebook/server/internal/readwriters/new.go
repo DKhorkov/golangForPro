@@ -2,8 +2,8 @@ package readwriters
 
 import (
 	"fmt"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/filepath"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/interfaces"
+	"github.com/DKhorkov/golangForPro/phonebook/server/internal/filepath"
+	"github.com/DKhorkov/golangForPro/phonebook/server/internal/interfaces"
 	"strings"
 )
 

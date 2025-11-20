@@ -1,7 +1,7 @@
 package readwriters
 
 import (
-	"github.com/DKhorkov/golangForPro/phonebook/internal/models"
+	"github.com/DKhorkov/golangForPro/phonebook/server/internal/models"
 	"time"
 )
 

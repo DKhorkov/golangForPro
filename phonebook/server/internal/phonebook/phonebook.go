@@ -2,8 +2,8 @@ package phonebook
 
 import (
 	"fmt"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/interfaces"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/models"
+	"github.com/DKhorkov/golangForPro/phonebook/server/internal/interfaces"
+	"github.com/DKhorkov/golangForPro/phonebook/server/internal/models"
 	"sort"
 )
 

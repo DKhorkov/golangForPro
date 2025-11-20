@@ -2,11 +2,8 @@ package commands
 
 import (
 	"fmt"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/filepath"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/models"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/phonebook"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/readwriters"
-	"github.com/DKhorkov/golangForPro/phonebook/internal/validation"
+	"github.com/DKhorkov/golangForPro/phonebook/client/internal/models"
+	"github.com/DKhorkov/golangForPro/phonebook/client/internal/validation"
 	"os"
 	"time"
 
@@ -26,27 +23,6 @@ var insertCmd = &cobra.Command{
 	Long:    `This command inserts new data into the phone book application.`,
 	Aliases: []string{"i"},
 	Run: func(cmd *cobra.Command, args []string) {
-		fp, err := filepath.Get()
-		if err != nil {
-			fmt.Println(err)
-
-			os.Exit(1)
-		}
-
-		rw, err := readwriters.New(fp)
-		if err != nil {
-			fmt.Println(err)
-
-			os.Exit(1)
-		}
-
-		pb, err := phonebook.New(rw)
-		if err != nil {
-			fmt.Println(err)
-
-			os.Exit(1)
-		}
-
 		name, err := cmd.Flags().GetString(nameKey)
 		if err != nil {
 			fmt.Printf("Not a valid name: %s. Error: %v\n", name, err)
@@ -91,12 +67,6 @@ var insertCmd = &cobra.Command{
 			Surname:    surname,
 			Phone:      phone,
 			LastAccess: time.Now(),
-		}
-
-		if err := pb.Insert(entry); err != nil {
-			fmt.Println(err)
-
-			os.Exit(1)
 		}
 	},
 }
