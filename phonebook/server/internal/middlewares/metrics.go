@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	// requestsTotal PROMQL => rate(requests_total[1m]).
+	// requestsTotal PROMQL => rate(requests_total[30s]).
 	requestsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "requests_total",
@@ -34,7 +34,7 @@ var (
 		},
 	)
 
-	// requestDuration PROMQL => rate(request_duration_seconds_sum{}[1m]) / rate(request_duration_seconds_count{}[1m]).
+	// requestDuration PROMQL => rate(request_duration_seconds_sum[30s]) / rate(request_duration_seconds_count[30s]).
 	requestDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Name: "request_duration_seconds",
