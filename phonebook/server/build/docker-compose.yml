@@ -1,0 +1,16 @@
+services:
+  phonebook_server:
+    container_name: phonebook_server
+    image: phonebook_server
+    build:
+      context: ../../..
+      dockerfile: ./phonebook/server/build/Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - phonebook_server
+
+networks:
+  phonebook_server:
+    name: phonebook_server
+    external: true

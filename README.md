@@ -2,10 +2,16 @@
 
 ## Server 
 
-Run:
+Run via IDE:
 
 ```shell
 go run phonebook/server/cmd/main.go
+```
+
+Run via Docker:
+
+```shell
+task -d ./phonebook/server/scripts run
 ```
 
 ## Client

@@ -1,0 +1,44 @@
+version: "3"
+
+tasks:
+  docker_network:
+    desc: "Create server docker network."
+    aliases:
+      - network
+    cmd: sudo docker network create phonebook_server
+
+  docker_build:
+    desc: "Build docker container for server."
+    cmd: sudo docker compose -f ../build/docker-compose.yml build
+
+  docker_run:
+    desc: "Launch docker container for server."
+    cmd: sudo docker compose -f ../build/docker-compose.yml up
+
+  docker_stop:
+    desc: "Stop all docker containers."
+    aliases:
+      - stop
+    cmd: sudo docker stop $(sudo docker ps -a -q)
+
+  docker_clean:
+    desc: "Clean docker containers, images and volumes."
+    aliases:
+      - clean
+    cmd: sudo docker system prune -a --volumes
+
+  copy_env:
+    desc: "Prepare .env file for docker."
+    internal: true
+    dir: ../../../
+    cmds:
+      - cp .env ./phonebook/server/build/.env
+
+  run:
+    desc: "Run application and it's dependencies for production."
+    cmds:
+      - task: copy_env
+      - task: docker_clean
+      - task: docker_network
+      - task: docker_build
+      - task: docker_run
