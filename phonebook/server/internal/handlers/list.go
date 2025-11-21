@@ -29,10 +29,14 @@ func ListHandler(pb interfaces.PhoneBook) http.HandlerFunc {
 		entries, err := pb.List(reverse)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		if err = json.NewEncoder(w).Encode(entries); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		w.WriteHeader(http.StatusOK)

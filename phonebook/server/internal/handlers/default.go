@@ -13,5 +13,7 @@ func DefaultHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := w.Write([]byte("Thanks for visiting!\n"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
 	}
 }

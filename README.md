@@ -1,6 +1,6 @@
 # Phonebook
 
-## Server 
+## Server
 
 Run via IDE:
 
@@ -50,4 +50,18 @@ Delete:
 
 ```shell
 ./phonebook_client -H <host> -P <port> delete -k "+7 (021) 703-77-56"
+```
+
+## Prometheus
+
+http://localhost:9090
+
+## Grafana
+
+http://localhost:3000
+
+Source URL:
+
+```shell
+http://prometheus:9090
 ```

@@ -16,7 +16,7 @@ func DeleteHandler(pb interfaces.PhoneBook) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)
 
-		key := r.URL.Query().Get(searchKey)
+		key := r.URL.Query().Get(deleteKey)
 		if !strings.HasPrefix(key, "+") {
 			key = "+" + key
 		}
@@ -29,6 +29,8 @@ func DeleteHandler(pb interfaces.PhoneBook) http.HandlerFunc {
 
 		if err := pb.Delete(key); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		w.WriteHeader(http.StatusOK)

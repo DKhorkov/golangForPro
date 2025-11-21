@@ -14,10 +14,14 @@ func StatusHandler(pb interfaces.PhoneBook) http.HandlerFunc {
 		entries, err := pb.List(false)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		if err = json.NewEncoder(w).Encode(len(entries)); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		w.WriteHeader(http.StatusOK)

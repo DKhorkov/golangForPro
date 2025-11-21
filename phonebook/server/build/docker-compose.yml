@@ -1,16 +1,44 @@
 services:
-  phonebook_server:
-    container_name: phonebook_server
-    image: phonebook_server
+  phonebook:
+    container_name: phonebook
+    image: phonebook
     build:
       context: ../../..
       dockerfile: ./phonebook/server/build/Dockerfile
     ports:
       - "${PORT}:${PORT}"
     networks:
-      - phonebook_server
+      - phonebook_network
+
+  prometheus:
+    image: prom/prometheus
+    env_file:
+      - ../../../.env
+    ports:
+      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+    volumes:
+      - ../../../prometheus.yml:/etc/prometheus/prometheus.yml  # Конфиг Prometheus
+    networks:
+      - phonebook_network
+    restart: unless-stopped
+    depends_on:
+      - phonebook
+
+  grafana:
+    image: grafana/grafana
+    env_file:
+      - ../../../.env
+    ports:
+      - "${GRAFANA_PORT}:${GRAFANA_PORT}"
+    volumes:
+      - ../../../grafana:/var/lib/grafana  # Сохраняет данные Grafana
+    networks:
+      - phonebook_network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
 
 networks:
-  phonebook_server:
-    name: phonebook_server
+  phonebook_network:
+    name: phonebook_network
     external: true

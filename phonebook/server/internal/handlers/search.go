@@ -31,10 +31,14 @@ func SearchHandler(pb interfaces.PhoneBook) http.HandlerFunc {
 		entry, err := pb.Search(key)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		if err = json.NewEncoder(w).Encode(entry); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		w.WriteHeader(http.StatusOK)

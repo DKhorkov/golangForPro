@@ -5,7 +5,7 @@ tasks:
     desc: "Create server docker network."
     aliases:
       - network
-    cmd: sudo docker network create phonebook_server
+    cmd: sudo docker network create phonebook_network
 
   docker_build:
     desc: "Build docker container for server."
@@ -23,9 +23,18 @@ tasks:
 
   docker_clean:
     desc: "Clean docker containers, images and volumes."
+    cmd: sudo docker system prune -a --volumes
+
+  clean_up:
+    desc: "Clean up all folders, docker volumes, images and containers."
+    dir: ../../../
     aliases:
       - clean
-    cmd: sudo docker system prune -a --volumes
+    cmds:
+#      - sudo rm -rf grafana/
+      - sudo rm -rf prometheus.yml
+      - sudo rm -rf phonebook/server/build/.env
+      - task: docker_clean
 
   copy_env:
     desc: "Prepare .env file for docker."
@@ -34,11 +43,29 @@ tasks:
     cmds:
       - cp .env ./phonebook/server/build/.env
 
+  create_grafana_folder:
+    desc: "Create Grafana folder for docker volume purposes."
+    internal: true
+    dir: ../../../
+    cmds:
+      - mkdir -p grafana
+      - sudo chmod -R 777 grafana
+
+  prepare_prometheus:
+    desc: "Prepares Prometheus config."
+    internal: true
+    dir: ../../../
+    cmds:
+      - export $(cat .env | xargs) && envsubst < ./phonebook/server/prometheus.template.yml > prometheus.yml
+
   run:
     desc: "Run application and it's dependencies for production."
     cmds:
+      - task: docker_stop
+      - task: clean_up
       - task: copy_env
-      - task: docker_clean
+      - task: create_grafana_folder
+      - task: prepare_prometheus
       - task: docker_network
       - task: docker_build
       - task: docker_run

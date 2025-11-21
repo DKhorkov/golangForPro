@@ -5,9 +5,11 @@ import (
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/config"
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/filepath"
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/handlers"
+	"github.com/DKhorkov/golangForPro/phonebook/server/internal/middlewares"
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/phonebook"
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/readwriters"
 	"github.com/DKhorkov/libs/loadenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/cors"
 	"net/http"
 )
@@ -41,6 +43,7 @@ func main() {
 	mux.Handle("/delete", handlers.DeleteHandler(pb))
 	mux.Handle("/status", handlers.StatusHandler(pb))
 	mux.Handle("/getFile", handlers.GetFileHandler(fp))
+	mux.Handle("/metrics", promhttp.Handler())
 
 	httpHandler := cors.New(
 		cors.Options{
@@ -51,6 +54,8 @@ func main() {
 			AllowCredentials: cfg.CORS.AllowCredentials,
 		},
 	).Handler(mux)
+
+	httpHandler = middlewares.MetricsMiddleware(httpHandler)
 
 	addr := fmt.Sprintf("%s:%d", cfg.HTTP.Host, cfg.HTTP.Port)
 	server := &http.Server{

@@ -55,10 +55,14 @@ func InsertHandler(pb interfaces.PhoneBook) http.HandlerFunc {
 
 		if err := pb.Insert(entry); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		if err := json.NewEncoder(w).Encode(entry); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		w.WriteHeader(http.StatusOK)
