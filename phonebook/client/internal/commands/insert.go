@@ -1,19 +1,22 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/DKhorkov/golangForPro/phonebook/client/internal/models"
 	"github.com/DKhorkov/golangForPro/phonebook/client/internal/validation"
-	"os"
-	"time"
-
 	"github.com/spf13/cobra"
+	"io"
+	"net/http"
+	"os"
 )
 
 const (
 	nameKey    = "name"
 	surnameKey = "surname"
 	phoneKey   = "phone"
+
+	insertURL = "http://%s:%d/insert"
 )
 
 // insertCmd represents the insert command
@@ -23,6 +26,20 @@ var insertCmd = &cobra.Command{
 	Long:    `This command inserts new data into the phone book application.`,
 	Aliases: []string{"i"},
 	Run: func(cmd *cobra.Command, args []string) {
+		host, err := cmd.Flags().GetString(hostKey)
+		if err != nil {
+			fmt.Printf("Failed to get host key from flags: %v\n", err)
+
+			os.Exit(1)
+		}
+
+		port, err := cmd.Flags().GetInt(portKey)
+		if err != nil {
+			fmt.Printf("Failed to get port key from flags: %v\n", err)
+
+			os.Exit(1)
+		}
+
 		name, err := cmd.Flags().GetString(nameKey)
 		if err != nil {
 			fmt.Printf("Not a valid name: %s. Error: %v\n", name, err)
@@ -62,12 +79,45 @@ var insertCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		entry := models.Entry{
-			Name:       name,
-			Surname:    surname,
-			Phone:      phone,
-			LastAccess: time.Now(),
+		addr := fmt.Sprintf(insertURL, host, port)
+		req, err := http.NewRequest(methodGet, addr, nil)
+		if err != nil {
+			fmt.Printf("Failed to create request: %v\n", err)
+
+			os.Exit(1)
 		}
+
+		q := req.URL.Query()
+		q.Set(nameKey, name)
+		q.Set(surnameKey, surname)
+		q.Set(phoneKey, phone)
+		req.URL.RawQuery = q.Encode()
+
+		httpClient := &http.Client{}
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			fmt.Printf("Failed to send request: %v\n", err)
+
+			os.Exit(1)
+		}
+
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			errInfo, _ := io.ReadAll(resp.Body)
+			fmt.Printf("Failed to send request: %v. Error: %s\n", resp.Status, errInfo)
+
+			os.Exit(1)
+		}
+
+		var entry models.Entry
+		if err := json.NewDecoder(resp.Body).Decode(&entry); err != nil {
+			fmt.Printf("Failed to decode response: %v\n", err)
+
+			os.Exit(1)
+		}
+
+		fmt.Println(entry.View())
 	},
 }
 

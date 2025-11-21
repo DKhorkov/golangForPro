@@ -16,32 +16,38 @@ task -d ./phonebook/server/scripts run
 
 ## Client
 
+Build:
+
+```shell
+go build -o phonebook_client phonebook/client/cmd/main.go
+```
+
 List:
 
 ```shell
-go run phonebook/client/cmd/main.go list
+./phonebook_client -H <host> -P <port> list
 ```
 
 List in reversed order:
 
 ```shell
-go run phonebook/client/cmd/main.go list -r
+./phonebook_client -H <host> -P <port> list -r
 ```
 
 Search:
 
 ```shell
-go run phonebook/client/cmd/main.go search -k "+7 (021) 703-77-56"
+./phonebook_client -H <host> -P <port> search -k "+7 (021) 703-77-56"
 ```
 
 Insert:
 
 ```shell
-go run phonebook/client/cmd/main.go insert -n Иван -s Романов -p "+7 (021) 703-77-56"
+./phonebook_client -H <host> -P <port> insert -n Иван -s Романов -p "+7 (021) 703-77-56"
 ```
 
 Delete:
 
 ```shell
-go run phonebook/client/cmd/main.go delete -k "+7 (021) 703-77-56"
+./phonebook_client -H <host> -P <port> delete -k "+7 (021) 703-77-56"
 ```

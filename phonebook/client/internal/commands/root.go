@@ -6,6 +6,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	hostKey = "host"
+	portKey = "port"
+)
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "phonebook",
@@ -22,4 +27,7 @@ func Execute() {
 	}
 }
 
-func init() {}
+func init() {
+	rootCmd.PersistentFlags().StringP(hostKey, "H", "localhost", "Host")
+	rootCmd.PersistentFlags().IntP(portKey, "P", 8080, "Port number")
+}

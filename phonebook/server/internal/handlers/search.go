@@ -17,7 +17,11 @@ func SearchHandler(pb interfaces.PhoneBook) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)
 
-		key := "+" + strings.TrimSpace(r.URL.Query().Get(searchKey))
+		key := r.URL.Query().Get(searchKey)
+		if !strings.HasPrefix(key, "+") {
+			key = "+" + key
+		}
+
 		if !validation.ValidatePhone(key) {
 			http.Error(w, "Not a valid Phone. Phone should be like \"+7 (911) 258-01-62\"\n", http.StatusBadRequest)
 

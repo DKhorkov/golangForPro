@@ -35,7 +35,11 @@ func InsertHandler(pb interfaces.PhoneBook) http.HandlerFunc {
 			return
 		}
 
-		phone := "+" + strings.TrimSpace(r.URL.Query().Get(phoneKey))
+		phone := r.URL.Query().Get(phoneKey)
+		if !strings.HasPrefix(phone, "+") {
+			phone = "+" + phone
+		}
+
 		if !validation.ValidatePhone(phone) {
 			http.Error(w, "Not a valid Phone. Phone should be like \"+7 (911) 258-01-62\"\n", http.StatusBadRequest)
 

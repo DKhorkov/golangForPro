@@ -41,6 +41,8 @@ func (pb *PhoneBook) createIndex() {
 func (pb *PhoneBook) List(reverse bool) ([]models.Entry, error) {
 	if reverse {
 		sort.Sort(sort.Reverse(pb.record))
+	} else {
+		sort.Sort(pb.record)
 	}
 
 	return pb.record, nil
