@@ -41,7 +41,7 @@ func DeleteHandler(u interfaces.UseCases) http.HandlerFunc {
 		err := u.Delete(key)
 		switch {
 		case errors.Is(err, customErrors.ErrNotFound):
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusNotFound)
 
 			return
 		case err != nil:

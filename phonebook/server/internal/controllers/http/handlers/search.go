@@ -42,7 +42,7 @@ func SearchHandler(u interfaces.UseCases) http.HandlerFunc {
 		entry, err := u.Search(key)
 		switch {
 		case errors.Is(err, customErrors.ErrNotFound):
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusNotFound)
 
 			return
 		case err != nil:
