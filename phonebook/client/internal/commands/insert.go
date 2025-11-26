@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/DKhorkov/golangForPro/phonebook/client/internal/models"
@@ -16,7 +17,7 @@ const (
 	surnameKey = "surname"
 	phoneKey   = "phone"
 
-	insertURL = "http://%s:%d/insert"
+	insertURL = "http://%s:%d/entries"
 )
 
 // insertCmd represents the insert command
@@ -79,19 +80,20 @@ var insertCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		data, err := json.Marshal(models.Entry{Name: name, Surname: surname, Phone: phone})
+		if err != nil {
+			fmt.Printf("Failed to marshal json: %v\n", err)
+
+			os.Exit(1)
+		}
+
 		addr := fmt.Sprintf(insertURL, host, port)
-		req, err := http.NewRequest(methodGet, addr, nil)
+		req, err := http.NewRequest(http.MethodPost, addr, bytes.NewReader(data))
 		if err != nil {
 			fmt.Printf("Failed to create request: %v\n", err)
 
 			os.Exit(1)
 		}
-
-		q := req.URL.Query()
-		q.Set(nameKey, name)
-		q.Set(surnameKey, surname)
-		q.Set(phoneKey, phone)
-		req.URL.RawQuery = q.Encode()
 
 		httpClient := &http.Client{}
 		resp, err := httpClient.Do(req)
@@ -100,8 +102,6 @@ var insertCmd = &cobra.Command{
 
 			os.Exit(1)
 		}
-
-		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			errInfo, _ := io.ReadAll(resp.Body)

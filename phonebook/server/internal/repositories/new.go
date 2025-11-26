@@ -1,4 +1,4 @@
-package readwriters
+package repositories
 
 import (
 	"fmt"
@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-func New(path string) (interfaces.ReadWriter, error) {
+func New(path string) (interfaces.EntriesRepository, error) {
 	switch {
 	case strings.HasSuffix(path, filepath.CSVExtension):
-		return NewCSVReadWriter(path), nil
+		return NewCSVEntriesRepository(path), nil
 	case strings.HasSuffix(path, filepath.JSONExtension):
-		return NewJSONReadWriter(path), nil
+		return NewJSONEntriesRepository(path), nil
 	}
 
 	return nil, fmt.Errorf(`invalid file extension "%s"`, path)

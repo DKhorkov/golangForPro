@@ -12,7 +12,7 @@ import (
 const (
 	deleteKey = "key"
 
-	deleteURL = "http://%s:%d/delete"
+	deleteURL = "http://%s:%d/entries/%s"
 )
 
 // deleteCmd represents the delete command
@@ -49,17 +49,13 @@ var deleteCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		addr := fmt.Sprintf(deleteURL, host, port)
-		req, err := http.NewRequest(methodGet, addr, nil)
+		addr := fmt.Sprintf(deleteURL, host, port, key)
+		req, err := http.NewRequest(http.MethodDelete, addr, nil)
 		if err != nil {
 			fmt.Printf("Failed to create request: %v\n", err)
 
 			os.Exit(1)
 		}
-
-		q := req.URL.Query()
-		q.Set(deleteKey, key)
-		req.URL.RawQuery = q.Encode()
 
 		httpClient := &http.Client{}
 		resp, err := httpClient.Do(req)

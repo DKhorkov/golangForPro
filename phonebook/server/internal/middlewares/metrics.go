@@ -13,6 +13,7 @@ const (
 	metricsURLPath = "/metrics"
 
 	urlLabel        = "url"
+	methodLabel     = "method"
 	statusLabel     = "status"
 	statusCodeLabel = "status_code"
 
@@ -29,6 +30,7 @@ var (
 		},
 		[]string{
 			urlLabel,
+			methodLabel,
 			statusLabel,
 			statusCodeLabel,
 		},
@@ -42,6 +44,7 @@ var (
 		},
 		[]string{
 			urlLabel,
+			methodLabel,
 			statusLabel,
 			statusCodeLabel,
 		},
@@ -104,6 +107,7 @@ func MetricsMiddleware(next http.Handler) http.Handler {
 		requestsTotal.With(
 			prometheus.Labels{
 				urlLabel:        r.URL.Path,
+				methodLabel:     r.Method,
 				statusLabel:     status,
 				statusCodeLabel: strconv.Itoa(mrw.StatusCode),
 			},
@@ -112,6 +116,7 @@ func MetricsMiddleware(next http.Handler) http.Handler {
 		requestDuration.With(
 			prometheus.Labels{
 				urlLabel:        r.URL.Path,
+				methodLabel:     r.Method,
 				statusLabel:     status,
 				statusCodeLabel: strconv.Itoa(mrw.StatusCode),
 			},

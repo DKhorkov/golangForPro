@@ -15,7 +15,7 @@ import (
 const (
 	reverseKey = "reverse"
 
-	listURL = "http://%s:%d/list"
+	listURL = "http://%s:%d/entries"
 )
 
 // listCmd represents the list command
@@ -47,7 +47,7 @@ var listCmd = &cobra.Command{
 		}
 
 		addr := fmt.Sprintf(listURL, host, port)
-		req, err := http.NewRequest(methodGet, addr, nil)
+		req, err := http.NewRequest(http.MethodGet, addr, nil)
 		if err != nil {
 			fmt.Printf("Failed to create request: %v\n", err)
 

@@ -1,4 +1,4 @@
-package readwriters
+package repositories
 
 import (
 	"encoding/csv"
@@ -10,19 +10,19 @@ import (
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/models"
 )
 
-type CSVReadWriter struct {
+type CSVEntriesRepository struct {
 	filepath string
 }
 
-func NewCSVReadWriter(filepath string) *CSVReadWriter {
-	return &CSVReadWriter{filepath: filepath}
+func NewCSVEntriesRepository(filepath string) *CSVEntriesRepository {
+	return &CSVEntriesRepository{filepath: filepath}
 }
 
-func (rw *CSVReadWriter) Read() ([]models.Entry, error) {
-	fileInfo, err := os.Stat(rw.filepath)
+func (r *CSVEntriesRepository) Read() ([]models.Entry, error) {
+	fileInfo, err := os.Stat(r.filepath)
 	switch {
 	case errors.Is(err, os.ErrNotExist):
-		if err = rw.Write(defaultEntries); err != nil {
+		if err = r.Write(defaultEntries); err != nil {
 			return nil, err
 		} // наполняем книгу дефолтными записями:
 	case err != nil:
@@ -30,11 +30,11 @@ func (rw *CSVReadWriter) Read() ([]models.Entry, error) {
 	default:
 		mode := fileInfo.Mode()
 		if !mode.IsRegular() {
-			return nil, fmt.Errorf("%s not a regular file", rw.filepath)
+			return nil, fmt.Errorf("%s not a regular file", r.filepath)
 		}
 	}
 
-	f, err := os.Open(rw.filepath)
+	f, err := os.Open(r.filepath)
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +67,8 @@ func (rw *CSVReadWriter) Read() ([]models.Entry, error) {
 	return entries, nil
 }
 
-func (rw *CSVReadWriter) Write(entries []models.Entry) error {
-	f, err := os.Create(rw.filepath)
+func (r *CSVEntriesRepository) Write(entries []models.Entry) error {
+	f, err := os.Create(r.filepath)
 	if err != nil {
 		return err
 	}

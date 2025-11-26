@@ -2,7 +2,7 @@ package interfaces
 
 import "github.com/DKhorkov/golangForPro/phonebook/server/internal/models"
 
-type ReadWriter interface {
+type EntriesRepository interface {
 	Read() ([]models.Entry, error)
 	Write(entries []models.Entry) error
 }

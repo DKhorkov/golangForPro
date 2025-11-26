@@ -15,7 +15,7 @@ import (
 const (
 	searchKey = "key"
 
-	searchURL = "http://%s:%d/search"
+	searchURL = "http://%s:%d/entries/%s"
 )
 
 // searchCmd represents the search command
@@ -53,17 +53,13 @@ var searchCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		addr := fmt.Sprintf(searchURL, host, port)
-		req, err := http.NewRequest(methodGet, addr, nil)
+		addr := fmt.Sprintf(searchURL, host, port, key)
+		req, err := http.NewRequest(http.MethodGet, addr, nil)
 		if err != nil {
 			fmt.Printf("Failed to create request: %v\n", err)
 
 			os.Exit(1)
 		}
-
-		q := req.URL.Query()
-		q.Set(searchKey, key)
-		req.URL.RawQuery = q.Encode()
 
 		httpClient := &http.Client{}
 		resp, err := httpClient.Do(req)

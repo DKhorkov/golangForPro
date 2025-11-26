@@ -1,4 +1,4 @@
-package readwriters
+package repositories
 
 import (
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/models"

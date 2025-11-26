@@ -1,4 +1,4 @@
-package readwriters
+package repositories
 
 import (
 	"encoding/json"
@@ -8,19 +8,19 @@ import (
 	"os"
 )
 
-type JSONReadWriter struct {
+type JSONEntriesRepository struct {
 	filepath string
 }
 
-func NewJSONReadWriter(filepath string) *JSONReadWriter {
-	return &JSONReadWriter{filepath: filepath}
+func NewJSONEntriesRepository(filepath string) *JSONEntriesRepository {
+	return &JSONEntriesRepository{filepath: filepath}
 }
 
-func (rw *JSONReadWriter) Read() ([]models.Entry, error) {
-	fileInfo, err := os.Stat(rw.filepath)
+func (r *JSONEntriesRepository) Read() ([]models.Entry, error) {
+	fileInfo, err := os.Stat(r.filepath)
 	switch {
 	case errors.Is(err, os.ErrNotExist):
-		if err = rw.Write(defaultEntries); err != nil {
+		if err = r.Write(defaultEntries); err != nil {
 			return nil, err
 		} // наполняем книгу дефолтными записями:
 	case err != nil:
@@ -28,11 +28,11 @@ func (rw *JSONReadWriter) Read() ([]models.Entry, error) {
 	default:
 		mode := fileInfo.Mode()
 		if !mode.IsRegular() {
-			return nil, fmt.Errorf("%s not a regular file", rw.filepath)
+			return nil, fmt.Errorf("%s not a regular file", r.filepath)
 		}
 	}
 
-	f, err := os.Open(rw.filepath)
+	f, err := os.Open(r.filepath)
 	if err != nil {
 		return nil, err
 	}
@@ -48,8 +48,8 @@ func (rw *JSONReadWriter) Read() ([]models.Entry, error) {
 	return entries, nil
 }
 
-func (rw *JSONReadWriter) Write(entries []models.Entry) error {
-	f, err := os.Create(rw.filepath)
+func (r *JSONEntriesRepository) Write(entries []models.Entry) error {
+	f, err := os.Create(r.filepath)
 	if err != nil {
 		return err
 	}

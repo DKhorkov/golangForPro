@@ -1,41 +1,50 @@
 package handlers
 
 import (
-	"encoding/json"
+	"errors"
+	"fmt"
+	customErrors "github.com/DKhorkov/golangForPro/phonebook/server/internal/errors"
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/interfaces"
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/validation"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"strings"
 )
 
 const (
-	searchKey = "key"
+	DeleteKey = "key"
 )
 
-func SearchHandler(pb interfaces.PhoneBook) http.HandlerFunc {
+func DeleteHandler(u interfaces.UseCases) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)
 
-		key := r.URL.Query().Get(searchKey)
+		key := mux.Vars(r)[DeleteKey]
 		if !strings.HasPrefix(key, "+") {
 			key = "+" + key
 		}
 
 		if !validation.ValidatePhone(key) {
-			http.Error(w, "Not a valid Phone. Phone should be like \"+7 (911) 258-01-62\"\n", http.StatusBadRequest)
+			http.Error(
+				w,
+				fmt.Sprintf(
+					"Not a valid Phone \"%s\". Phone should be like \"+7 (911) 258-01-62\"\n",
+					key,
+				),
+				http.StatusBadRequest,
+			)
 
 			return
 		}
 
-		entry, err := pb.Search(key)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		err := u.Delete(key)
+		switch {
+		case errors.Is(err, customErrors.ErrNotFound):
+			http.Error(w, err.Error(), http.StatusBadRequest)
 
 			return
-		}
-
-		if err = json.NewEncoder(w).Encode(entry); err != nil {
+		case err != nil:
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return

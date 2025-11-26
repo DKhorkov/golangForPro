@@ -5,20 +5,35 @@ import (
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/interfaces"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
-func StatusHandler(pb interfaces.PhoneBook) http.HandlerFunc {
+const (
+	reverseKey = "reverse"
+)
+
+func ListHandler(u interfaces.UseCases) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)
 
-		entries, err := pb.List(false)
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+
+			return
+		}
+
+		reverseStr := strings.TrimSpace(r.URL.Query().Get(reverseKey))
+		reverse, _ := strconv.ParseBool(reverseStr)
+
+		entries, err := u.List(reverse)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
 		}
 
-		if err = json.NewEncoder(w).Encode(len(entries)); err != nil {
+		if err = json.NewEncoder(w).Encode(entries); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
