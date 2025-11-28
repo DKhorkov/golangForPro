@@ -10,20 +10,22 @@ import (
 )
 
 const (
-	reverseKey = "reverse"
+	ReverseKey = "reverse"
 )
 
+// swagger:route GET /entries ListEntries reverseKey
+// Returns all entries
+//
+// responses:
+//	200: Entries
+//  500: InternalServerError
+
+// ListHandler returns all entries
 func ListHandler(u interfaces.UseCases) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)
 
-		if r.Method != http.MethodGet {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-
-			return
-		}
-
-		reverseStr := strings.TrimSpace(r.URL.Query().Get(reverseKey))
+		reverseStr := strings.TrimSpace(r.URL.Query().Get(ReverseKey))
 		reverse, _ := strconv.ParseBool(reverseStr)
 
 		entries, err := u.List(reverse)

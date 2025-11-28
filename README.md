@@ -3,8 +3,8 @@
 ## Server
 
 Run via IDE:
-
 ```shell
+task -d ./phonebook/server/scripts docs 
 go run phonebook/server/cmd/main.go
 ```
 
@@ -65,3 +65,7 @@ Source URL:
 ```shell
 http://prometheus:9090
 ```
+
+## Docs
+
+http://localhost:8080/docs

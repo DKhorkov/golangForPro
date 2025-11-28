@@ -6,6 +6,14 @@ import (
 	"net/http"
 )
 
+// swagger:route GET /*
+// Default Handler for endpoints used with incorrect HTTP request method
+//
+// responses:
+//	404: ErrorMessage
+//	500: InternalServerError
+
+// NotAllowedHandler is executed when the HTTP method is incorrect
 func NotAllowedHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)
 

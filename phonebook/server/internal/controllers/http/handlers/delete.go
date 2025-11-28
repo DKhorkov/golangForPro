@@ -16,6 +16,16 @@ const (
 	DeleteKey = "key"
 )
 
+// swagger:route DELETE /entries/{key} DeleteEntry deleteKey
+// Delete an entry given it key.
+//
+// responses:
+//  200: OK
+//  400: BadRequest
+//  404: NotFound
+//  500: InternalServerError
+
+// DeleteHandler is for deleting users based on provided key
 func DeleteHandler(u interfaces.UseCases) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)

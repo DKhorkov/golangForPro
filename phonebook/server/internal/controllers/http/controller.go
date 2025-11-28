@@ -8,6 +8,7 @@ import (
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/controllers/http/handlers"
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/interfaces"
 	"github.com/DKhorkov/golangForPro/phonebook/server/internal/middlewares"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/cors"
@@ -23,8 +24,9 @@ type Controller struct {
 func New(
 	httpConfig config.HTTPConfig,
 	corsConfig config.CORSConfig,
+	docsConfig config.DocsConfig,
 	useCases interfaces.UseCases,
-) *Controller {
+) (*Controller, error) {
 	rootMux := mux.NewRouter()
 	rootMux.NotFoundHandler = http.HandlerFunc(handlers.DefaultHandler)
 	rootMux.MethodNotAllowedHandler = http.HandlerFunc(handlers.NotAllowedHandler)
@@ -34,6 +36,11 @@ func New(
 	getMux.Handle("/metrics", promhttp.Handler())
 	getMux.Handle("/entries", handlers.ListHandler(useCases))
 	getMux.Handle(fmt.Sprintf("/entries/{%s}", handlers.SearchKey), handlers.SearchHandler(useCases))
+
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}                    // Устанавливаем название юрла файла для обслуживания сваггера
+	sh := middleware.Redoc(opts, nil)                                         // Мидлварь для обаботки файла при переходе по юрлу документации
+	getMux.Handle("/docs", sh)                                                // Устанавливаем юрл для получения документации
+	getMux.Handle("/swagger.yaml", http.FileServer(http.Dir(docsConfig.Dir))) // Связываем установленный юрл с отдачей файла
 
 	postMux := rootMux.Methods(http.MethodPost).Subrouter()
 	postMux.Handle("/entries", handlers.InsertHandler(useCases))
@@ -64,7 +71,7 @@ func New(
 		server: server,
 		host:   httpConfig.Host,
 		port:   httpConfig.Port,
-	}
+	}, nil
 }
 
 func (c *Controller) Run() {

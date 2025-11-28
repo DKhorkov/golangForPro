@@ -13,6 +13,7 @@ FROM alpine AS runner
 WORKDIR /app
 
 COPY .env .
+COPY ./swagger.yaml .
 
 COPY --from=builder /build/server /app/server
 

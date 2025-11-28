@@ -32,6 +32,10 @@ func New() Config {
 			Path:   loadenv.GetEnv("PHONEBOOK_PATH", "phonebook.json"),
 			Source: loadenv.GetEnv("PHONEBOOK_SOURCE", "json"),
 		},
+		Docs: DocsConfig{
+			// Для запуска в ИДЕ нужно использовать "./phonebook/server/internal/controllers/http":
+			Dir: loadenv.GetEnv("DOCS_FILEPATH_DIR", "./"),
+		},
 	}
 }
 
@@ -56,8 +60,13 @@ type FilepathConfig struct {
 	Source string
 }
 
+type DocsConfig struct {
+	Dir string
+}
+
 type Config struct {
 	HTTP     HTTPConfig
 	CORS     CORSConfig
+	Docs     DocsConfig
 	Filepath FilepathConfig
 }

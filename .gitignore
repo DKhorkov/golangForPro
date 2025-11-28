@@ -18,6 +18,7 @@ phonebook_cli
 phonebook_client
 phonebook.csv
 phonebook.json
+swagger.yaml
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

@@ -31,7 +31,10 @@ func main() {
 		panic(err)
 	}
 
-	c := controllers.New(cfg.HTTP, cfg.CORS, u)
+	c, err := controllers.New(cfg.HTTP, cfg.CORS, cfg.Docs, u)
+	if err != nil {
+		panic(err)
+	}
 
 	application := app.New(c)
 	application.Run()

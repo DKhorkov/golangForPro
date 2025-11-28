@@ -14,6 +14,15 @@ import (
 	"strings"
 )
 
+// swagger:route POST /entries InsertEntry insertEntryInput
+// Create a new Entry
+//
+// responses:
+//	200: Entry
+//  400: BadRequest
+//  500: InternalServerError
+
+// InsertHandler is for adding a new entry
 func InsertHandler(u interfaces.UseCases) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)

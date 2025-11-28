@@ -58,9 +58,17 @@ tasks:
     cmds:
       - export $(cat .env | xargs) && envsubst < ./phonebook/server/prometheus.template.yml > prometheus.yml
 
+  generate_open_api_docs:
+    aliases:
+      - docs
+    desc: "Generates Swagger docs for viewing in web by service."
+    dir: ../../../
+    cmd:  swagger generate spec --scan-models -o ./swagger.yaml
+
   run:
     desc: "Run application and it's dependencies for production."
     cmds:
+      - task: generate_open_api_docs
       - task: docker_stop
       - task: clean_up
       - task: copy_env

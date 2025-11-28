@@ -17,6 +17,16 @@ const (
 	SearchKey = "key"
 )
 
+// swagger:route GET /entries/{key} SearchEntry searchKey
+// Returns searched entry
+//
+// responses:
+//	200: Entry
+//  400: BadRequest
+//  404: NotFound
+//  500: InternalServerError
+
+// SearchHandler returns searched entry
 func SearchHandler(u interfaces.UseCases) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Serving:", r.URL.Path, "from", r.Host, "Method:", r.Method)
